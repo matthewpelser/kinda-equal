@@ -9,8 +9,8 @@ export function equalish(o1, o2) {
     let jo1 = clone(o1);
     let jo2 = clone(o2);
 
-    deleteKeys(jo1, applyFilters(jo1));
-    deleteKeys(jo2, applyFilters(jo2));
+    applyFilters(jo1);
+    applyFilters(jo2);
 
     return applyCompare(jo1, jo2, 'root');
 }
@@ -32,16 +32,17 @@ function clone(o) {
 }
 
 function applyFilters(o) {
-  let ignore = [];
+  const ignore = [];
   Object.keys(o).forEach((key) => {
     let value = o[key];
     if(value !== null && typeof value === 'object' && value.constructor === Object) {
-        deleteKeys(value, applyFilters(value));
+        applyFilters(value);
     }
     if(ignoreValue(value)){
       ignore.push(key);
     }
   });
+  deleteKeys(o, ignore);
   return ignore;
 }
 
@@ -52,28 +53,24 @@ function applyCompare(o1, o2, key) {
                 return applyCompare(vi1, o2[i], key);
             });
         } else {
-            console.log(`Array not equal ${key}`);
             return false;
         }
     }
 
     if (o1 !== null && typeof o1 === 'object' && o1.constructor === Object) {
         if (o2 !== null && typeof o2 === 'object' && o2.constructor === Object && 
-            (Object.keys(o1).length && Object.keys(o2).length)) {
+            (Object.keys(o1).length === Object.keys(o2).length)) {
                 return Object.keys(o1).every((ckey) => {
                     let v1 = o1[ckey];
                     let v2 = o2[ckey];
                     return applyCompare(v1, v2, ckey);
                 });
         } else {
-            console.log(`Object not equal ${key}`);
             return false;
         }
     }
 
-    const vcompare = (o1 === o2);
-    if (!vcompare) console.log(`Value not equal ${key}`);
-    return vcompare;
+    return (o1 === o2);
 }
 
 function deleteKeys(o, keys) {
@@ -85,5 +82,3 @@ function deleteKeys(o, keys) {
 function ignoreValue(value) {
   return ignore.some((f) => f(value));
 }
-
-exports.equalish = equalish;
