@@ -1,4 +1,10 @@
 
+const ignore = [
+    ignoreEmptyArray,
+    ignoreEmptyNullUndefined,
+    ignoreEmptyObject
+];
+
 export function equalish(o1, o2) {
     let jo1 = clone(o1);
     let jo2 = clone(o2);
@@ -7,6 +13,18 @@ export function equalish(o1, o2) {
     deleteKeys(jo2, applyFilters(jo2));
 
     return applyCompare(jo1, jo2, 'root');
+}
+
+export function ignoreEmptyNullUndefined(value) {
+   return (value === '' || value === null || value === undefined);
+}
+
+export function ignoreEmptyArray(value) {
+    return (Array.isArray(value) && value.length === 0);
+}
+
+export function ignoreEmptyObject(value) {
+    return (Object.keys(value).length === 0 && value.constructor === Object);
 }
 
 function clone(o) {
@@ -65,16 +83,7 @@ function deleteKeys(o, keys) {
 }
 
 function ignoreValue(value) {
-  if (value === '' || value === null || value === undefined) {
-  	return true;
-  }
-  if (Array.isArray(value) && value.length === 0) {
-  	return true;
-  }
-  if (Object.keys(value).length === 0 && value.constructor === Object) {
-    return true;
-  }
-  return false;
+  return ignore.some((f) => f(value));
 }
 
 exports.equalish = equalish;
