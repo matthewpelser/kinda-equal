@@ -5,14 +5,18 @@ const ignore = [
     ignoreEmptyObject
 ];
 
-export function equalish(o1, o2) {
-    let jo1 = clone(o1);
-    let jo2 = clone(o2);
-
-    applyFilters(jo1);
-    applyFilters(jo2);
-
-    return applyCompare(jo1, jo2, 'root');
+export default function kindaEqual(config) {
+    return {
+        equalish: (o1, o2) => {
+            let jo1 = clone(o1);
+            let jo2 = clone(o2);
+        
+            applyFilters(jo1);
+            applyFilters(jo2);
+        
+            return applyCompare(jo1, jo2, 'root');
+        }
+    };
 }
 
 export function ignoreEmptyNullUndefined(value) {
@@ -89,15 +93,19 @@ function applyCompare(o1, o2, key) {
 }
 
 function deleteKeys(o, keys) {
-    keys.forEach((key) => {
-  	    delete o[key];
-    });
+    if (keys && o && Array.isArray(keys)) {
+        keys.forEach((key) => {
+            delete o[key];
+        });
+    }
 }
 
 function deleteItems(o, orderedKeys) {
-    orderedKeys.reverse().forEach((i) => {
-        o.splice(i, 1);
-    });
+    if (o && orderedKeys && Array.isArray(orderedKeys)) {
+        orderedKeys.reverse().forEach((i) => {
+            o.splice(i, 1);
+        });
+    }
 }
 
 function ignoreValue(value) {
