@@ -100,3 +100,24 @@ describe('Complex object with arrays', () => {
     assert.equal(false, result);
   });
 });
+
+describe('Complex arrays with empty items', () => {
+  it('Removes items and matches', function () {
+    const d1 = new Date(2013, 1, 1);
+    const d2 = new Date(2013, 1, 1);
+    const o1 = { a: 1, c: [{}, {}, {a: 5}]};
+    const o2 = { a: 1, c: [{a: 5}, {b: { c: {}}}]};
+
+    const result = kindaEqual.equalish(o1, o2);
+    assert.equal(true, result);
+  });
+  it('Matches straight array', function () {
+    const d1 = new Date(2013, 1, 1);
+    const d2 = new Date(2013, 1, 1);
+    const o1 = { a: 1, c: [1, 4, new Date(2017, 1, 1)]};
+    const o2 = { a: 1, c: [1, 4, new Date(2017, 1, 1)]};
+
+    const result = kindaEqual.equalish(o1, o2);
+    assert.equal(true, result);
+  });
+});

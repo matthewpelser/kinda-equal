@@ -32,18 +32,33 @@ function clone(o) {
 }
 
 function applyFilters(o) {
-  const ignore = [];
-  Object.keys(o).forEach((key) => {
-    let value = o[key];
-    if(value !== null && typeof value === 'object' && value.constructor === Object) {
-        applyFilters(value);
+
+    if (Array.isArray(o)) {
+        const ignoreItems = [];
+        o.forEach((item, i) => {
+
+            applyFilters(item);
+
+            if(ignoreValue(item)) {
+                ignoreItems.push(i);
+            }
+        });
+        deleteItems(o, ignoreItems);
     }
-    if(ignoreValue(value)){
-      ignore.push(key);
+
+    if (o !== null && typeof o === 'object' && o.constructor === Object) {
+        const ignoreKeys = [];
+        Object.keys(o).forEach((key) => {
+            let value = o[key];
+            
+            applyFilters(value);
+            
+            if(ignoreValue(value)){
+                ignoreKeys.push(key);
+            }
+        });
+        deleteKeys(o, ignoreKeys);
     }
-  });
-  deleteKeys(o, ignore);
-  return ignore;
 }
 
 function applyCompare(o1, o2, key) {
@@ -76,6 +91,12 @@ function applyCompare(o1, o2, key) {
 function deleteKeys(o, keys) {
     keys.forEach((key) => {
   	    delete o[key];
+    });
+}
+
+function deleteItems(o, orderedKeys) {
+    orderedKeys.reverse().forEach((i) => {
+        o.splice(i, 1);
     });
 }
 
