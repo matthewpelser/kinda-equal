@@ -5,7 +5,14 @@ const ignore = [
     ignoreEmptyObject
 ];
 
-export default function kindaEqual(config) {
+export function kindaEqual(config) {
+
+    if (config && config.filters && Array.isArray(config.filters)) {
+        config.filters.forEach((f) => {
+            ignore.push(f);
+        });
+    }
+
     return {
         equalish: (o1, o2) => {
             let jo1 = clone(o1);
@@ -14,7 +21,7 @@ export default function kindaEqual(config) {
             applyFilters(jo1);
             applyFilters(jo2);
         
-            return applyCompare(jo1, jo2, 'root');
+            return applyCompare(jo1, jo2, '.');
         }
     };
 }
@@ -35,15 +42,15 @@ function clone(o) {
     return JSON.parse(JSON.stringify(o));
 }
 
-function applyFilters(o) {
+function applyFilters(o, k, oi) {
 
     if (Array.isArray(o)) {
         const ignoreItems = [];
         o.forEach((item, i) => {
 
-            applyFilters(item);
+            applyFilters(item, k, i);
 
-            if(ignoreValue(item)) {
+            if(ignoreValue(item, k, i)) {
                 ignoreItems.push(i);
             }
         });
@@ -55,9 +62,9 @@ function applyFilters(o) {
         Object.keys(o).forEach((key) => {
             let value = o[key];
             
-            applyFilters(value);
+            applyFilters(value, key);
             
-            if(ignoreValue(value)){
+            if(ignoreValue(value, key)){
                 ignoreKeys.push(key);
             }
         });
@@ -108,6 +115,6 @@ function deleteItems(o, orderedKeys) {
     }
 }
 
-function ignoreValue(value) {
-  return ignore.some((f) => f(value));
+function ignoreValue(value, key) {
+  return ignore.some((f) => f(value, key));
 }

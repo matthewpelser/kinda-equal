@@ -1,5 +1,5 @@
 const assert = require('assert');
-const kindaEqual = require('../dist/kinda-equal.umd').default;
+const kindaEqual = require('../dist/kinda-equal.umd').kindaEqual;
 
 describe('Simple object', () => {
   it('Basic match', function () {
@@ -118,6 +118,22 @@ describe('Complex arrays with empty items', () => {
     const o2 = { a: 1, c: [1, 4, new Date(2017, 1, 1)]};
 
     const result = kindaEqual().equalish(o1, o2);
+    assert.equal(true, result);
+  });
+});
+
+describe('Custom filters', () => {
+  it('Applies custom files', function () {
+    const d1 = new Date(2013, 1, 1);
+    const d2 = new Date(2013, 1, 1);
+    const o1 = { a: 1, d: {'$var1': 2}, c: [{}, {}, {a: 5}]};
+    const o2 = { a: 1, c: [{a: 5}, {b: { c: {'$var2': 2}}}]};
+
+    const config = {filters: [
+      (value, key, index) => key.startsWith('$')
+    ]};
+
+    const result = kindaEqual(config).equalish(o1, o2);
     assert.equal(true, result);
   });
 });
