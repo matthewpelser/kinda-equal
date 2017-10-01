@@ -1,6 +1,6 @@
 {
   "name": "kinda-equal",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Customisable model equality utility",
   "author": {
     "name": "Matthew Pelser",
@@ -32,8 +32,9 @@
   },
   "scripts": {
     "package": "cp package.json dist/",
+    "readme": "cp README.md dist/",
     "module": "rollup -c",
-    "build": "npm run module && npm run package",
+    "build": "npm run module && npm run package && npm run readme",
     "dev": "rollup -c -w",
     "test": "mocha",
     "pretest": "npm run build"
