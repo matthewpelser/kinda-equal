@@ -1,10 +1,23 @@
 {
   "name": "kinda-equal",
   "version": "0.0.1",
-  "description": "",
-  "main": "dist/kinda-equal.js",
-  "module": "dist/kinda-equal.esm.js",
-  "browser": "dist/kinda-equal.umd.js",
+  "description": "Customisable model equality utility",
+  "author": {
+    "name": "Matthew Pelser",
+    "email": "matthew@independentcode.com"
+  },
+  "keywords": [
+    "kinda equal",
+    "object equal",
+    "model compare", 
+    "equality", 
+    "deep equal"
+  ],
+  "license": "MIT",
+  "main": "./index",
+  "module": "./index",
+  "browser": "./kinda-equal.umd",
+  "bundle": "./kinda-equal.es",
   "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -23,7 +36,8 @@
     "test": "mocha",
     "pretest": "npm run build"
   },
-  "files": [
-    "dist"
-  ]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matthewpelser/kinda-equal"
+  }
 }

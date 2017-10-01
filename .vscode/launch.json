@@ -4,7 +4,7 @@
             {
                 "type": "node",
                 "request": "launch",
-                "name": "Mocha Tests",
+                "name": "Mocha Debug",
                 "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
                 "args": [
                     "-u",
@@ -15,12 +15,6 @@
                     "${workspaceRoot}/test"
                 ],
                 "internalConsoleOptions": "openOnSessionStart"
-            },
-            {
-                "type": "node",
-                "request": "launch",
-                "name": "Launch Program",
-                "program": "${workspaceRoot}\\kinda-equal.js"
             }
         ]
     }
