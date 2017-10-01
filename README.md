@@ -3,6 +3,8 @@
 ## About
 A depth first model comparison utility for messy models.
 
+Its kinda experimental. Needs perf'ing, fix'ing, doc'ing :stuck_out_tongue_winking_eye:
+
 ## Installing
 * Install with: `npm install kinda-equal --save`
 
@@ -10,7 +12,7 @@ A depth first model comparison utility for messy models.
 
 * Comparing objects
 
-```
+```javascript
 
 const pure = {
     person: {
@@ -44,7 +46,7 @@ const result = kindaEqual().equalish(pure, dirty);
 
 * Using custom ignore functions
 
-```
+```javascript
 
 const pure = {
     person: {
