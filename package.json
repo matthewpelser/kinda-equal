@@ -31,7 +31,9 @@
     "babel-preset-env": "~1.6.0"
   },
   "scripts": {
-    "build": "rollup -c",
+    "package": "cp package.json dist/",
+    "module": "rollup -c",
+    "build": "npm run module && npm run package",
     "dev": "rollup -c -w",
     "test": "mocha",
     "pretest": "npm run build"
