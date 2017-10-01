@@ -88,6 +88,10 @@ const result = kindaEqual(config).equalish(pure, dirty);
 ## Dependencies
 
 ## Developer instructions
+```
+npm run test
+npm run build
+```
 
 ## License
 MIT
