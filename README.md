@@ -1,5 +1,7 @@
 # kinda-equal
 
+[![Build Status](https://travis-ci.org/matthewpelser/kinda-equal.svg?branch=master)](https://travis-ci.org/matthewpelser/kinda-equal)
+
 ## About
 A depth first model comparison utility for messy models.
 
