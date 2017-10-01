@@ -137,3 +137,4 @@ describe('Custom filters', () => {
     assert.equal(true, result);
   });
 });
+
