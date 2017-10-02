@@ -21,7 +21,7 @@ export function kindaEqual(config) {
             applyFilters(jo1);
             applyFilters(jo2);
         
-            return applyCompare(jo1, jo2);
+            return applyCompare(jo1, jo2, '.');
         }
     };
 }
@@ -77,7 +77,7 @@ function applyFilters(o, k, oi) {
     }
 }
 
-function applyCompare(o1, o2, key = '.') {
+function applyCompare(o1, o2, key) {
     if (isArray(o1) && isArray(o2)) {
         if (o1.length === o2.length) {
             return o1.every((vi1, i) => {
