@@ -7,7 +7,7 @@ const ignore = [
 
 export function kindaEqual(config) {
 
-    if (config && config.filters && Array.isArray(config.filters)) {
+    if (config && config.filters && isArray(config.filters)) {
         config.filters.forEach((f) => {
             ignore.push(f);
         });
@@ -21,7 +21,7 @@ export function kindaEqual(config) {
             applyFilters(jo1);
             applyFilters(jo2);
         
-            return applyCompare(jo1, jo2, '.');
+            return applyCompare(jo1, jo2);
         }
     };
 }
@@ -31,11 +31,16 @@ export function ignoreEmptyNullUndefined(value) {
 }
 
 export function ignoreEmptyArray(value) {
-    return (Array.isArray(value) && value.length === 0);
+    return (isArray(value) && value.length === 0);
 }
 
 export function ignoreEmptyObject(value) {
-    return (Object.keys(value).length === 0 && value.constructor === Object);
+    return (
+        value !== null && 
+        typeof value === 'object' && 
+        value.constructor === Object && 
+        Object.keys(value).length === 0
+    );
 }
 
 function clone(o) {
@@ -44,7 +49,7 @@ function clone(o) {
 
 function applyFilters(o, k, oi) {
 
-    if (Array.isArray(o)) {
+    if (isArray(o)) {
         const ignoreItems = [];
         o.forEach((item, i) => {
 
@@ -57,10 +62,10 @@ function applyFilters(o, k, oi) {
         deleteItems(o, ignoreItems);
     }
 
-    if (o !== null && typeof o === 'object' && o.constructor === Object) {
+    if (isPlainObject(o)) {
         const ignoreKeys = [];
         Object.keys(o).forEach((key) => {
-            let value = o[key];
+            const value = o[key];
             
             applyFilters(value, key);
             
@@ -72,8 +77,8 @@ function applyFilters(o, k, oi) {
     }
 }
 
-function applyCompare(o1, o2, key) {
-    if (Array.isArray(o1) && Array.isArray(o2)) {
+function applyCompare(o1, o2, key = '.') {
+    if (isArray(o1) && isArray(o2)) {
         if (o1.length === o2.length) {
             return o1.every((vi1, i) => {
                 return applyCompare(vi1, o2[i], key);
@@ -83,12 +88,12 @@ function applyCompare(o1, o2, key) {
         }
     }
 
-    if (o1 !== null && typeof o1 === 'object' && o1.constructor === Object) {
-        if (o2 !== null && typeof o2 === 'object' && o2.constructor === Object && 
+    if (isPlainObject(o1)) {
+        if (isPlainObject(o2) && 
             (Object.keys(o1).length === Object.keys(o2).length)) {
                 return Object.keys(o1).every((ckey) => {
-                    let v1 = o1[ckey];
-                    let v2 = o2[ckey];
+                    const v1 = o1[ckey];
+                    const v2 = o2[ckey];
                     return applyCompare(v1, v2, ckey);
                 });
         } else {
@@ -97,6 +102,14 @@ function applyCompare(o1, o2, key) {
     }
 
     return (o1 === o2);
+}
+
+function isPlainObject(o) {
+    return o !== null && typeof o === 'object' && o.constructor === Object;
+}
+
+function isArray(o) {
+    return Array.isArray(o);
 }
 
 function deleteKeys(o, keys) {
@@ -116,5 +129,5 @@ function deleteItems(o, orderedKeys) {
 }
 
 function ignoreValue(value, key) {
-  return ignore.some((f) => f(value, key));
+    return ignore.some((f) => f(value, key));
 }
