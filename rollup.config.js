@@ -14,8 +14,8 @@ export default [
 			babel({
 				exclude: 'node_modules/**'
 			 }),
-			resolve(),
-			commonjs()
+			 resolve(),
+			 commonjs()
 		]
 	},
 	{

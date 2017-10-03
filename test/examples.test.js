@@ -1,5 +1,6 @@
 const assert = require('assert');
-const kindaEqual = require('../dist/kinda-equal.umd').kindaEqual;
+const ke = require('../dist/kinda-equal.umd');
+const kindaEqual = ke.kindaEqual;
 
 describe('Examples', () => {
     it('Example 1', function () {
@@ -64,6 +65,9 @@ describe('Examples', () => {
 
         const config = {
             filters: [
+                ke.ignoreEmptyArray,
+                ke.ignoreEmptyNullUndefined,
+                ke.ignoreEmptyObject,
                 (value, key, index) => key.startsWith('$')
             ]
         };

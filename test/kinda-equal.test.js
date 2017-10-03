@@ -1,5 +1,6 @@
 const assert = require('assert');
-const kindaEqual = require('../dist/kinda-equal.umd').kindaEqual;
+const ke = require('../dist/kinda-equal.umd');
+const kindaEqual = ke.kindaEqual;
 
 describe('Simple object', () => {
   it('Basic match', function () {
@@ -43,8 +44,8 @@ describe('Complex object', () => {
   it('Basic match', function () {
     const d1 = new Date(2013, 1, 1);
     const d2 = new Date(2013, 1, 1);
-    const o1 = { a: 1, b: null, c: 'goo', d: d1, e: undefined, i: [], f: { a1: { g: {} } } };
-    const o2 = { a: 1, b: null, c: 'goo', d: d2, e: undefined, i: [], f: { a1: { g: {} } } };
+    const o1 = { a: 1, b: null, c: 'goo', d: d1, e: undefined, i: [], f: { a1: { g: {}}}};
+    const o2 = { a: 1, b: null, c: 'goo', d: d2, e: undefined, i: [], f: { a1: { g: {}}}};
 
     const result = kindaEqual().equalish(o1, o2);
     assert.equal(true, result);
@@ -103,8 +104,6 @@ describe('Complex object with arrays', () => {
 
 describe('Complex arrays with empty items', () => {
   it('Removes items and matches', function () {
-    const d1 = new Date(2013, 1, 1);
-    const d2 = new Date(2013, 1, 1);
     const o1 = { a: 1, c: [{}, {}, {a: 5}]};
     const o2 = { a: 1, c: [{a: 5}, {b: { c: {}}}]};
 
@@ -112,8 +111,6 @@ describe('Complex arrays with empty items', () => {
     assert.equal(true, result);
   });
   it('Matches straight array', function () {
-    const d1 = new Date(2013, 1, 1);
-    const d2 = new Date(2013, 1, 1);
     const o1 = { a: 1, c: [1, 4, new Date(2017, 1, 1)]};
     const o2 = { a: 1, c: [1, 4, new Date(2017, 1, 1)]};
 
@@ -123,15 +120,27 @@ describe('Complex arrays with empty items', () => {
 });
 
 describe('Custom filters', () => {
-  it('Applies custom files', function () {
-    const d1 = new Date(2013, 1, 1);
-    const d2 = new Date(2013, 1, 1);
+  it('Applies filters', function () {
     const o1 = { a: 1, d: {'$var1': 2}, c: [{}, {}, {a: 5}]};
     const o2 = { a: 1, c: [{a: 5}, {b: { c: {'$var2': 2}}}]};
 
     const config = {filters: [
+      ke.ignoreEmptyArray,
+      ke.ignoreEmptyNullUndefined,
+      ke.ignoreEmptyObject,
       (value, key, index) => key.startsWith('$')
     ]};
+
+    const result = kindaEqual(config).equalish(o1, o2);
+    assert.equal(true, result);
+  });
+  it('Equal without filters', function () {
+    const d1 = new Date(2013, 1, 1);
+    const d2 = new Date(2013, 1, 1);
+    const o1 = { a: 1, d: d1, c: {a: ['x']}};
+    const o2 = { a: 1, d: d2, c: {a: ['x']}};
+
+    const config = {filters: []};
 
     const result = kindaEqual(config).equalish(o1, o2);
     assert.equal(true, result);
