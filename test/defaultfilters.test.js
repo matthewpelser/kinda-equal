@@ -1,41 +1,47 @@
 const assert = require('assert');
-const ke = require('../dist/kinda-equal.umd');
-const kindaEqual = ke.kindaEqual;
+const kindaEqual = require('../dist/index');
 
 describe('Simple object', () => {
   it('Basic match', function () {
     const o1 = { a: 1, b: 'goo', c: null, d: undefined, e: [] };
     const o2 = { a: 1, b: 'goo', c: null, d: undefined, e: [] };
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(true, result);
   });
   it('Basic mismatch', function () {
     const o1 = { a: 1, b: 'foo', c: null, d: undefined, e: [] };
     const o2 = { a: 1, b: 'goo', c: null, d: undefined, e: [] };
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
+    assert.equal(false, result);
+  });
+  it('Basic date mismatch', function () {
+    const o1 = { a: 1, b: 'foo', c: null, d: undefined, e: new Date(2013, 1, 1) };
+    const o2 = { a: 1, b: 'foo', c: null, d: undefined, e: new Date(2013, 1, 2) };
+
+    const result = kindaEqual()(o1, o2);
     assert.equal(false, result);
   });
   it('Basic match missing', function () {
     const o1 = { a: 1, b: 'foo', c: null, e: [] };
     const o2 = { a: 1, b: 'goo', d: undefined, e: [] };
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(false, result);
   });
   it('Deep match missing a', function () {
     const o1 = { a: 1, b: 'foo', c: {a1: 1, b2: {c1: 9, c2: ''}}, e: [] };
     const o2 = { a: 1, b: 'foo', c: {a1: 1, b2: {c1: 9, c2: 'y'}}, e: [] };
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(false, result);
   });
   it('Deep match missing b', function () {
     const o1 = { a: 1, b: 'foo', c: {a1: 1, b2: {c1: 9, c2: 'x'}}, e: [] };
     const o2 = { a: 1, b: 'foo', c: {a1: 1, b2: {c1: 9, c2: ''}}, e: [] };
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(false, result);
   });
 });
@@ -47,7 +53,7 @@ describe('Complex object', () => {
     const o1 = { a: 1, b: null, c: 'goo', d: d1, e: undefined, i: [], f: { a1: { g: {}}}};
     const o2 = { a: 1, b: null, c: 'goo', d: d2, e: undefined, i: [], f: { a1: { g: {}}}};
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(true, result);
   });
 });
@@ -59,7 +65,7 @@ describe('Simple array', () => {
     const o1 = { a: ['boo', 'foo', d1]};
     const o2 = { a: ['boo', 'foo', d2]};
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(true, result);
   });
   it('Basic mismatch', function () {
@@ -68,7 +74,7 @@ describe('Simple array', () => {
     const o1 = { a: ['boo', 'foo', d1, 'hoo']};
     const o2 = { a: ['boo', 'foo', d2]};
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(false, result);
   });
 });
@@ -84,7 +90,7 @@ describe('Complex object with arrays', () => {
       {a: 1}, {b: 'f'}
     ] } } };
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(true, result);
   });
   it('Correctly identifies mismatches', function () {
@@ -97,7 +103,7 @@ describe('Complex object with arrays', () => {
       {a: 1}, {b:'f'}, {c: []}
     ] } } };
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(false, result);
   });
 });
@@ -107,43 +113,14 @@ describe('Complex arrays with empty items', () => {
     const o1 = { a: 1, c: [{}, {}, {a: 5}]};
     const o2 = { a: 1, c: [{a: 5}, {b: { c: {}}}]};
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(true, result);
   });
   it('Matches straight array', function () {
     const o1 = { a: 1, c: [1, 4, new Date(2017, 1, 1)]};
     const o2 = { a: 1, c: [1, 4, new Date(2017, 1, 1)]};
 
-    const result = kindaEqual().equalish(o1, o2);
+    const result = kindaEqual()(o1, o2);
     assert.equal(true, result);
   });
 });
-
-describe('Custom filters', () => {
-  it('Applies filters', function () {
-    const o1 = { a: 1, d: {'$var1': 2}, c: [{}, {}, {a: 5}]};
-    const o2 = { a: 1, c: [{a: 5}, {b: { c: {'$var2': 2}}}]};
-
-    const config = {filters: [
-      ke.ignoreEmptyArray,
-      ke.ignoreEmptyNullUndefined,
-      ke.ignoreEmptyObject,
-      (value, key, index) => key.startsWith('$')
-    ]};
-
-    const result = kindaEqual(config).equalish(o1, o2);
-    assert.equal(true, result);
-  });
-  it('Equal without filters', function () {
-    const d1 = new Date(2013, 1, 1);
-    const d2 = new Date(2013, 1, 1);
-    const o1 = { a: 1, d: d1, c: {a: ['x']}};
-    const o2 = { a: 1, d: d2, c: {a: ['x']}};
-
-    const config = {filters: []};
-
-    const result = kindaEqual(config).equalish(o1, o2);
-    assert.equal(true, result);
-  });
-});
-

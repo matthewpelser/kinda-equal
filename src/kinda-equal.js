@@ -1,29 +1,39 @@
-export function kindaEqual(config) {
+export default function kindaEqual(config) {
 
     const filters = buildIgnoreFilters(config);
 
-    return {
-        equalish: (o1, o2) => {
-            let jo1 = clone(o1);
-            let jo2 = clone(o2);
-        
+    const equalish = (o1, o2) => {
+        let jo1 = o1;
+        let jo2 = o2;
+    
+        if (filters && filters.length > 0) {
+            jo1 = clone(o1);
+            jo2 = clone(o2);
+
             applyFilters(jo1, filters);
             applyFilters(jo2, filters);
-        
-            return applyCompare(jo1, jo2, '.');
         }
+    
+        return applyCompare(jo1, jo2, '.');
     };
+
+    return equalish;
 }
 
-export function ignoreEmptyNullUndefined(value) {
+// Expose the default ignore filters;
+kindaEqual.ignoreEmptyNullUndefined = ignoreEmptyNullUndefined;
+kindaEqual.ignoreEmptyArray = ignoreEmptyArray;
+kindaEqual.ignoreEmptyObject = ignoreEmptyObject;
+
+function ignoreEmptyNullUndefined(value) {
    return (value === '' || value === null || value === undefined);
 }
 
-export function ignoreEmptyArray(value) {
+function ignoreEmptyArray(value) {
     return (isArray(value) && value.length === 0);
 }
 
-export function ignoreEmptyObject(value) {
+function ignoreEmptyObject(value) {
     return (
         value !== null && 
         typeof value === 'object' && 
@@ -89,6 +99,9 @@ function applyFilters(obj, filters) {
 }
 
 function applyCompare(o1, o2, key) {
+
+    if (o1 === o2) return true;
+
     if (isArray(o1) && isArray(o2)) {
         if (o1.length === o2.length) {
             return o1.every((vi1, i) => {
@@ -103,6 +116,9 @@ function applyCompare(o1, o2, key) {
         if (isPlainObject(o2) && 
             (Object.keys(o1).length === Object.keys(o2).length)) {
                 return Object.keys(o1).every((ckey) => {
+                    if (!o2.hasOwnProperty(ckey)) {
+                        return false;
+                    }
                     const v1 = o1[ckey];
                     const v2 = o2[ckey];
                     return applyCompare(v1, v2, ckey);
@@ -112,7 +128,15 @@ function applyCompare(o1, o2, key) {
         }
     }
 
-    return (o1 === o2);
+    if (isDate(o1) && isDate(o2)) {
+        return o1.getTime() === o2.getTime();
+    }
+
+    if (isRegEx(o1) && isRegEx(o2)) {
+        return o1.toString() === o2.toString();
+    }
+
+    return false;
 }
 
 function isPlainObject(o) {
@@ -121,6 +145,14 @@ function isPlainObject(o) {
 
 function isArray(o) {
     return Array.isArray(o);
+}
+
+function isDate(o) {
+    return o instanceof Date;
+}
+
+function isRegEx(o) {
+   return o instanceof RegExp
 }
 
 function deleteKeys(o, keys) {

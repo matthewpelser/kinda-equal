@@ -1,7 +1,7 @@
 {
   "name": "kinda-equal",
-  "version": "0.0.6",
-  "description": "Customisable model equality utility",
+  "version": "0.0.7",
+  "description": "Equality checking for messy models",
   "author": {
     "name": "Matthew Pelser",
     "email": "matthew@independentcode.com"

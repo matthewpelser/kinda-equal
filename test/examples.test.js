@@ -1,6 +1,5 @@
 const assert = require('assert');
-const ke = require('../dist/kinda-equal.umd');
-const kindaEqual = ke.kindaEqual;
+const kindaEqual = require('../dist/index');
 
 describe('Examples', () => {
     it('Example 1', function () {
@@ -31,7 +30,7 @@ describe('Examples', () => {
             ]
         };
 
-        const result = kindaEqual().equalish(pure, dirty);
+        const result = kindaEqual()(pure, dirty);
         assert.equal(true, result);
     });
 
@@ -65,14 +64,15 @@ describe('Examples', () => {
 
         const config = {
             filters: [
-                ke.ignoreEmptyArray,
-                ke.ignoreEmptyNullUndefined,
-                ke.ignoreEmptyObject,
+                kindaEqual.ignoreEmptyArray,
+                kindaEqual.ignoreEmptyNullUndefined,
+                kindaEqual.ignoreEmptyObject,
                 (value, key, index) => key.startsWith('$')
             ]
         };
 
-        const result = kindaEqual(config).equalish(pure, dirty);
+        const customEqual = kindaEqual(config);
+        const result = customEqual(pure, dirty);
         assert.equal(true, result);
     });
 });
