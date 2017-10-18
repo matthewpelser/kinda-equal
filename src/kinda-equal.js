@@ -62,18 +62,20 @@ function clone(o) {
 
 function applyFilters(obj, filters) {
 
-    const ignoreValue = (value, key) => {
-        return filters.some((f) => f(value, key));
+    let path;
+
+    const ignoreValue = (value, key, i, p) => {
+        return filters.some((f) => f(value, key, i, p));
     };
 
-    const filter = (o, k, oi) => {
+    const filter = (o, k, oi, p) => {
         if (isArray(o)) {
             const ignoreItems = [];
             o.forEach((item, i) => {
+                const ip = p + '[' + i + ']';
+                filter(item, k, i, ip);
 
-                filter(item, k, i);
-
-                if(ignoreValue(item, k, i)) {
+                if(ignoreValue(item, k, i, ip)) {
                     ignoreItems.push(i);
                 }
             });
@@ -84,10 +86,10 @@ function applyFilters(obj, filters) {
             const ignoreKeys = [];
             Object.keys(o).forEach((key) => {
                 const value = o[key];
+                const op =  (p ? (p + '.') : '') + key;
+                filter(value, key, undefined, op);
                 
-                filter(value, key);
-                
-                if(ignoreValue(value, key)){
+                if(ignoreValue(value, key, undefined, op)){
                     ignoreKeys.push(key);
                 }
             });
@@ -95,7 +97,7 @@ function applyFilters(obj, filters) {
         }
     };
 
-    filter(obj);
+    filter(obj, undefined, undefined, path);
 }
 
 function applyCompare(o1, o2, key) {

@@ -75,4 +75,37 @@ describe('Examples', () => {
         const result = customEqual(pure, dirty);
         assert.equal(true, result);
     });
+
+    it('Example 3', function () {
+        const bob_record_1 = {
+            person: {
+                first: 'Bob',
+                contact: {
+                    phone: ['555-666', '444-333']
+                }
+            }
+        };
+
+        const bob_record_2 = {
+            person: {
+                first: 'Bob',
+                contact: {
+                    phone: ['555-666', '699-333']
+                }
+            }
+        };
+
+        const config = {
+            filters: [
+                kindaEqual.ignoreEmptyArray,
+                kindaEqual.ignoreEmptyNullUndefined,
+                kindaEqual.ignoreEmptyObject,
+                (value, key, index, path) => path.startsWith('person.contact.phone') && index > 0
+            ]
+        };
+
+        const customEqual = kindaEqual(config);
+        const result = customEqual(bob_record_1, bob_record_2);
+        assert.equal(true, result);
+    });    
 });

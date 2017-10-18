@@ -64,7 +64,7 @@ is equivelent to :
 
 filters are simple functions returning **true** if the property must be ignored.
 
-They recieve 3 parameters ```value```, ```key```, ```index```
+They recieve 4 parameters ```value```, ```key```, ```index```, ```path```
 
 
 | Param        | Type           | |
@@ -72,6 +72,7 @@ They recieve 3 parameters ```value```, ```key```, ```index```
 | value      | * | |
 | key    | string     | |
 | index | number     | Optional if value is Array |
+| path | string     | String path from root to the current property e.g 'person.contact.phone[1]' |
 
 ### Example filters ###
 
@@ -112,7 +113,7 @@ Install with: `npm install kinda-equal --save`
 
 ## Usage
 
-### Comparing objects
+### Comparing objects with the default ingore filters
 
 ```javascript
 
@@ -147,7 +148,7 @@ assert.equal(true, result);
 
 ```
 
-### Adding a custom ignore function to the default ignore functions
+### Adding a custom ignore function including the default ignore functions
 
 ```javascript
 
@@ -161,6 +162,7 @@ const pure = {
     ]
 };
 
+// use the default ignore functions and all properties starting with $
 const dirty = {
     person: {
         first: 'Bob',
@@ -190,6 +192,45 @@ const config = {
 const customEqual = kindaEqual(config);
 const result = customEqual(pure, dirty);
 assert.equal(true, result);
+
+```
+
+### Adding a custom ignore function which uses path
+
+```javascript
+
+// ignore all but the first (index 0) phone number
+const bob_record_1 = {
+    person: {
+        first: 'Bob',
+        contact: {
+            phone: ['555-666', '444-333']
+        }
+    }
+};
+
+const bob_record_2 = {
+    person: {
+        first: 'Bob',
+        contact: {
+            phone: ['555-666', '699-333']
+        }
+    }
+};
+
+const config = {
+    filters: [
+        kindaEqual.ignoreEmptyArray,
+        kindaEqual.ignoreEmptyNullUndefined,
+        kindaEqual.ignoreEmptyObject,
+        (value, key, index, path) => path.startsWith('person.contact.phone') && index > 0
+    ]
+};
+
+const customEqual = kindaEqual(config);
+const result = customEqual(bob_record_1, bob_record_2);
+assert.equal(true, result);
+
 
 ```
 
