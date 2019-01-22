@@ -65,7 +65,7 @@ function applyFilters(obj, filters) {
     let path;
 
     const ignoreValue = (value, key, i, p) => {
-        return filters.some((f) => f(value, key, i, p));
+        return filters.some((f) => f.call(obj, value, key, i, p));
     };
 
     const filter = (o, k, oi, p) => {

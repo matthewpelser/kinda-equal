@@ -9,8 +9,8 @@
   "keywords": [
     "kinda equal",
     "object equal",
-    "model compare", 
-    "equality", 
+    "model compare",
+    "equality",
     "deep equal"
   ],
   "license": "MIT",
@@ -20,15 +20,15 @@
   "bundle": "./kinda-equal.es",
   "dependencies": {},
   "devDependencies": {
-    "babel-core": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-helpers": "^6.24.1",
     "babel-plugin-external-helpers": "^6.22.0",
-    "mocha": "^3.5.3",
+    "babel-preset-env": "^1.7.0",
+    "mocha": "^5.2.0",
     "rollup": "^0.46.0",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-commonjs": "^8.0.2",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "babel-preset-env": "~1.6.0"
+    "rollup-plugin-node-resolve": "^3.0.0"
   },
   "scripts": {
     "package": "cp package.json dist/",

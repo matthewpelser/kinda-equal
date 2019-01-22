@@ -66,4 +66,30 @@ describe('Custom filters', () => {
       const result = customEqual(o1, o2);
       assert.equal(true, result);
     });
+
+    it('References model in filter', function () {
+      const m1 = { type: 'manager', hours: 80, first: 'john'};
+      const w1 = { type: 'worker', first: 'john'};
+      const w2 = { type: 'worker', hours: 41, first: 'john'};
+      const w3 = { type: 'worker', hours: 41, first: 'john'};
+
+      const config = {filters: [
+        kindaEqual.ignoreEmptyArray,
+        kindaEqual.ignoreEmptyNullUndefined,
+        kindaEqual.ignoreEmptyObject,
+        (value, key) => {
+            if (key === 'type') return true;
+            if (key === 'hours' && this.type === 'manager') {
+                return true;
+            }
+        }
+      ]};
+  
+      const customEqual = kindaEqual(config);
+      const r1 = customEqual(m1, w1);
+      assert.equal(false, r1);
+
+      const r2 = customEqual(w2, w3);
+      assert.equal(true, r2);
+    });
   });
