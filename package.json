@@ -26,9 +26,9 @@
     "babel-preset-env": "^1.7.0",
     "mocha": "^5.2.0",
     "rollup": "^0.46.0",
-    "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-commonjs": "^8.0.2",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "rollup-plugin-babel": "^3.0.7",
+    "rollup-plugin-commonjs": "^8.4.1",
+    "rollup-plugin-node-resolve": "^3.4.0"
   },
   "scripts": {
     "package": "cp package.json dist/",
